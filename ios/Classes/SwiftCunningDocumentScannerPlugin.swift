@@ -7,6 +7,7 @@ import VisionKit
 public class SwiftCunningDocumentScannerPlugin: NSObject, FlutterPlugin, VNDocumentCameraViewControllerDelegate {
    var resultChannel: FlutterResult?
    var presentingController: VNDocumentCameraViewController?
+   var noOfPages: Int = 1
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "cunning_document_scanner", binaryMessenger: registrar.messenger())
@@ -18,6 +19,10 @@ public class SwiftCunningDocumentScannerPlugin: NSObject, FlutterPlugin, VNDocum
     if call.method == "getPictures" {
             let presentedVC: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
             self.resultChannel = result
+            if let args = call.arguments as? [Int: Any],
+               let pageCount = args["noOfPages"] as? Int {
+                self.noOfPages = pageCount
+            }
             if VNDocumentCameraViewController.isSupported {
                 self.presentingController = VNDocumentCameraViewController()
                 self.presentingController!.delegate = self
@@ -45,7 +50,8 @@ public class SwiftCunningDocumentScannerPlugin: NSObject, FlutterPlugin, VNDocum
         df.dateFormat = "yyyyMMdd-HHmmss"
         let formattedDate = df.string(from: currentDateTime)
         var filenames: [String] = []
-        for i in 0 ..< scan.pageCount {
+        let pageCount = min(scan.pageCount, maxPageCount)
+        for i in 0 ..< pageCount {
             let page = scan.imageOfPage(at: i)
             let url = tempDirPath.appendingPathComponent(formattedDate + "-\(i).png")
             try? page.pngData()?.write(to: url)
