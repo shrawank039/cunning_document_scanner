@@ -51,7 +51,7 @@ public class SwiftCunningDocumentScannerPlugin: NSObject, FlutterPlugin, VNDocum
         let formattedDate = df.string(from: currentDateTime)
         var filenames: [String] = []
         let pageCount = min(scan.pageCount, maxPageCount)
-        for i in 0 ..< pageCount {
+        for i in 0 ..< 1 {
             let page = scan.imageOfPage(at: i)
             let url = tempDirPath.appendingPathComponent(formattedDate + "-\(i).png")
             try? page.pngData()?.write(to: url)
