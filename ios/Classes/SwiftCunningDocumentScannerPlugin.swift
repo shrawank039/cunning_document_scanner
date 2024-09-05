@@ -51,13 +51,18 @@ public class SwiftCunningDocumentScannerPlugin: NSObject, FlutterPlugin, VNDocum
         let formattedDate = df.string(from: currentDateTime)
         var filenames: [String] = []
         let pageCount = min(scan.pageCount, maxPageCount)
-        for i in 0 ..< 1 {
-            let page = scan.imageOfPage(at: i)
-            let url = tempDirPath.appendingPathComponent(formattedDate + "-\(i).png")
-            try? page.pngData()?.write(to: url)
-            filenames.append(url.path)
-        }
-        resultChannel?(filenames)
+        // for i in 0 ..< 1 {
+        //     let page = scan.imageOfPage(at: i)
+        //     let url = tempDirPath.appendingPathComponent(formattedDate + "-\(i).png")
+        //     try? page.pngData()?.write(to: url)
+        //     filenames.append(url.path)
+        // }
+        // resultChannel?(filenames)
+        // Capture only the first page
+      let firstPage = scan.imageOfPage(at: 0)
+      let url = tempDirPath.appendingPathComponent(formattedDate + "-0.png")
+      try? firstPage.pngData()?.write(to: url)
+      resultChannel?([url.path])
         presentingController?.dismiss(animated: true)
     }
 
